@@ -1,0 +1,51 @@
+1.ORM 对象关键映射
+Models.py中一个类对应数据库中的一个表
+表中字段有多种类型如：int/varchar/datetime
+定义Model字段时需要不同类型
+verbose_name用于页面展示
+
+2.常用字段类型
+数字
+AutoField 自增主键
+id = models.AutoField(primary_key=True)
+
+BooleanField 布尔型 一般用于记录状态
+
+DecimalField 数据精度
+IntegerField 不自增
+文本
+口 CharField varchar。 基础的 varchar 类型。
+口 URLField。 继承自 CharField但是实现了对 URL 的特殊处理。
+口UUIDField char(32 ） 。 除了在 PostgreSQL 中使用的是 uuid 类型外，在其他数据库中 均是固定长度 char (3 2 ） ，用来存放生成的唯一 id。
+口 EmailField。 同 URLField 一样，它继承自 CharField， 多了对 E-mail 的特殊处理。
+口 FileField。 同 URLField 一样，它继承自 CharField，多了对文件的特殊处理。 当你 定义一个字段为 FileField 时，在 admin部分展示时会自动生成一个可上传文件的按钮。
+口 TextField longtext。 一般用来存放大量文本内容，比如新闻正文、博客正文。
+口 ImageField。 继承自 FileField，用来处理图片相关的数据，在展示上会有不同。
+3. 日期类型
+下面 3 个都是日期类型 ，分别对应 MySQL 的 date、 datetime 和 time，似乎也不需要过 多解释：
+口 DateField
+口 DateT工meField
+口 TimeField
+4 关系类型
+这是关系型数据库中比较重要的字段类型，用来关联两个表， 具体如下：
+口 ForeignKey
+口 OneToOneField
+口 ManyToManyField
+
+参数：
+口 null。 可以同 blank 对比考虑，其中 null 用于设定在数据库层面是否允许为空。
+口 blank。 针对业务层面，该值是否允许为空。
+口 choices。 前面介绍过，配置字段的 choices 后，在 admin 页面上就可以看到对应的可 选项展示。
+口 db_column。 默认情况下，我们定义的 Field 就是对应数据库中的字段名称，通过这个参 数可以指定 Model 中的某个字段对应数据库中的哪个字段。
+口 db_index。 索引配置。 对于业务上需要经常作为查询条件的字段，应该配置此项。
+口 default。 默认值配置。
+口 editable。 是否可编辑，默认是 True。 如果不想将这个字段展示到页面上，可以配置 为 False。
+口 error_messages。 用来自定义字段值校验失败时的异常提示，它是字典格式。 key 的可 选项为null、 blank、 invalid、Invalid_choice、 unique 和 unique_for_date。
+口 help_text。 字段提示语，配置这一项后，在页面对应字段的下方会展示此配置。
+口 primary_key。 主键，一个 Model 只允许设置一个字段为 primary_key。
+口 unique。 唯一约束，当需要配置唯一值时，设置 unique=True，设置此项后，不需要 设置 db_index。
+口 unique for date。 针对 date （ 日期）的联合约束，需要注意的是，这并不是数据库层面的约束。
+口 unique_for_month。 针对月份的联合约束。
+口 unique_for_year。 针对年份的联合约束。
+口 verbose_name 字段对应的展示文案。
+口 validators。 自定义校验逻辑
