@@ -1,0 +1,36 @@
+
+1 支持链式调用的接口
+支持链式调用的接口 eri返回 QuerySet 的接口，具体如下。
+口 all 接口 。 相当于 SELECT * FROM table name 语句，用于查询所有数据。
+口 filter 接口。 顾名思义，根据条件过滤数据，常用的条件基本上是字段等于、不等于、 大于、小于。 当然，还有其他的，比如能改成产生 LIKE 查询的 ： Model . objects . filter (content_contains＝ ”条件” ） 。
+口 exclude 接口 。 同 filter ，只是相反的逻辑。
+口 reverse 接口。 把 QuerySet 中的结果倒序排列。
+口 distinct 接口。 用来进行去重查询， 产生 SELECT DISTINCT 这样的 SQL 查询。
+口 None 接口 。 返回空的 QuerySet。
+2. 不支持链式调用的接口
+不支持链式调用的接口即返回值不是 QuerySet 的接口 ， 具体如下。
+口 get 接口。 比如 Post.objects . get(id=l ） 用于查询 id 为 l 的文章： 如果存在 ， 则直 ‘ 接返回对应的 Post 实例；如果不存在， 则抛出 DoesNotEx工st 异常。 所以一般情况下 ， 我们会这么用：
+try : post = Post .objects.get(id=l)
+except Post .DoesNotExist: ＃做异常情况处理
+口 create 接口。 用来直接创建一个 Model 对象， 比如 post = Post . objects . create (title＝ ”xx” ） 。
+口 get or create 接口。 根据条件查找， 如果没查找到， 就调用 create 创建。
+口 update_or_create 接口 。同 get_or_create，只是用来做更新操作。
+口 count 接口。 用于返回 QuerySet 有多少条记录， 相当于 SELECT COUNT ( * ) FROM table_
+口 latest 接口。 用于返回最新的一条记录， 但是需要在 Model 的 Meta 中定义： get_latest_ by = ＜用来排序的字段〉。
+口 earliest 接口。 同上，返回最早的一条记录。
+口 first 接口。 从当前 QuerySet 记录中获取第一条。
+口 last 接口。 同上，获取最后一条。
+口 exists 接口 。 返回 True 或者 False，在数据库层面执行 SELECT (1 ) AS ”a ” FROM table_narne LIMIT l 的查询，如果只是需要判断 QuerySet 是否有数据，用这个接口 是最合适的方式。 不要用 count 或者 len(queryset ）这样的操作来判断是否存在。 相 反， 如果可以预期接下来会用到 QuerySet 中的数据，可以考虑使用 len （queryset) 的方式来做判断，这样可以减少一次 DB 查询请求。
+口 bulk_create 接口 。 同 create ，用来批量创建记录。
+口 in_bulk 接口 。 批量查询， 接收两个参数 id_list 和 filed_narne 。 可以通过 Post . objects . in_bulk ( [ 1, 2 , 3] ）查询出 id 为 1 、 2、 3 的数据，返回结果是字典 类型，字典类型的 key 为查询条件。 返回结果示例 ： ｛ l : <Post 实伽1] l> , 2 : <Post 实例 2> , 3 : <Post 实171) 3> ｝ 。
+口 update 接口。 用来根据条件批量更新记录，比如： Post.objects.filter(owner_name= ’ the5fire ’ ) .update(title＝ ’ 测试更新 ’ ） 。
+号
+
+口 delete 接口。 同 update，这个接口是用来根据条件批量删除记录。 需要注意的是， update 和 delete 都会触发 Django 的 signal ( signal 的用法见附录 E ）。 口 values 接口。 当我们明确知道只需要返回某个字段的值，不需要 Model实例时，可以使 用它，用法如下：
+Post.objects.filter(category_id=l) .values( ' title ’ )
+＃返回的结果包含 diet 的 QuerySet ，类似这样 ： ＜QuerySet [{ ' title ’:xxx} ,) >
+口 values_list 接口 。 同 values ，但是直接返回的是包含 tuple 的 QuerySet :
+titles_list = Post . objects . filter(category=l) . values_list ( 'title ' )
+＃返回结果类似：＜QuerySet [ （ ’ 标题 ’， ）］〉
+如果只是一个字段的话，可以通过增加 flat=True 参数， 便于我们后续处理：
+title_list =Post objects . filter(category=l) .values_list ( ’ title ', flat=True) for title in title list : print(title)
